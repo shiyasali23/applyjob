@@ -21,8 +21,9 @@ documents, form answers, LinkedIn, outreach e-mail).
 
 ## 1. Never
 1. **Never submit, send or post without the user's named approval.** Submitting = clicking Submit/Apply/Send on a
-   job form or sending an e-mail. The user approves by pasting the line from `applyjob approve-line` (it names every
-   job). Only `APPROVED` jobs may be submitted. "Send all" or "apply to everything" is not an approval: reply with
+   job form or sending an e-mail. The user approves a whole batch ONCE, before filling, by pasting back the line from
+   `applyjob approve-batch` (it names every job). Only jobs in that line may be submitted; `record ... SUBMITTED`
+   refuses any other. "Send all" or "apply to everything" is not an approval: reply with
    the approve-line.
 2. **Never log in for the user.** Never type, ask for, or store a password, cookie, 2FA code or recovery code. The
    user logs in to LinkedIn, job boards and Gmail in his own browser. Login wall on a form = record `LOGIN`.

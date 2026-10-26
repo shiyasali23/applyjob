@@ -179,9 +179,24 @@ class T(unittest.TestCase):
         for i in ids[:5]: ledger.set_status(db, i, "READY", "")
         line = applying.approve_line(db, "b1")
         self.assertTrue(line.startswith("submit ") and "Co0" in line)
-        done, refused = applying.approve(db, "b1", line + ", %d Co9" % ids[9])
-        self.assertEqual(sorted(done), sorted(ids[:5])); self.assertEqual(len(refused), 1)   # Co9 was not READY
-        self.assertEqual(len(applying.approved(db, "b1")), 5)
+        done, refused = applying.approve(db, "b1", line + ", %d Co9, %d Wrongname" % (ids[9], ids[10]))
+        self.assertEqual(sorted(done), sorted(ids[:5] + [ids[9]]))       # AUDITED Co9: approvable before filling
+        self.assertEqual(len(refused), 1)                                  # a name that doesn't match its id is refused
+        self.assertEqual(len(applying.approved(db, "b1")), 6)
+        # batch approval BEFORE filling: one line names every open, not-yet-approved job
+        batch_line = applying.approve_line(db, "b1", before_filling=True)
+        self.assertIn("Co19", batch_line); self.assertNotIn("Co9,", batch_line)
+        q, _ = applying.queue(db, "b1")
+        self.assertTrue(any(x["approved"] for x in q) and not all(x["approved"] for x in q))
+
+    def test_submit_needs_approval(self):
+        env = dict(os.environ, APPLYJOB_HOME=TMP)
+        i, _ = ledger.add(self.db, "Nordwind", "Data Analyst X", "https://nordwind.example/j/9")
+        run = lambda *a: subprocess.run([sys.executable, "-m", "applyjob"] + list(a), cwd=ROOT, env=env, capture_output=True, text=True)
+        r = run("record", str(i), "SUBMITTED", "", "--evidence", "page: Thank you for applying")
+        self.assertEqual(r.returncode, 1); self.assertIn("not in the user's approval line", r.stderr)
+        r = run("record", str(i), "SUBMITTED", "", "--evidence", "page: Thank you for applying", "--manual")
+        self.assertEqual(r.returncode, 0, r.stderr)
 
     def test_claims(self):
         ok, _ = workspace.claim("batch:x", "chat-a"); self.assertTrue(ok)

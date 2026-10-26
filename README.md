@@ -5,7 +5,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/python-3.9%2B-3776ab?style=flat-square" alt="Python 3.9+">
   <img src="https://img.shields.io/badge/dependencies-2-22d3ee?style=flat-square" alt="2 dependencies">
-  <img src="https://img.shields.io/badge/tests-20%20passing-34d399?style=flat-square" alt="20 tests passing">
+  <img src="https://img.shields.io/badge/tests-21%20passing-34d399?style=flat-square" alt="21 tests passing">
   <img src="https://img.shields.io/badge/license-MIT-8b5cf6?style=flat-square" alt="MIT">
   <img src="https://img.shields.io/badge/runs%20in-Claude%20Code-d97757?style=flat-square" alt="Runs in Claude Code">
 </p>
@@ -60,7 +60,7 @@ After that you talk to it normally: *"find data analyst jobs in Munich"*, *"writ
 |---|---|---|
 | The agent invents a number or a tool | Every number in a CV or letter must exist in that role's profile entry; a bullet may only name tools that role used | `audit.py` |
 | "Looks done" is not done | `SUBMITTED` needs `page: <quote>` or `mail: <subject>`; badges and "clicked submit" are rejected | `ledger.py` |
-| Mass-sending without a human | Fill agents never submit. One pasted approval line names every job; only those become `APPROVED` | `applying.py` |
+| Approving job by job is slow; approving nothing is unsafe | You approve the whole batch once, before filling, by pasting one line that names every job. Parallel agents then fill and submit only those; `record SUBMITTED` refuses any other | `applying.py`, `cli.py` |
 | Forgotten personal details | A 97-item checklist; each stage refuses to run until its items are answered | `checklist.py` |
 | Files scattered by long or parallel chats | A PreToolUse hook blocks writes outside the allowed folders; chats claim batches | `guard.py`, `workspace.py` |
 | ATS can't read the PDF | A font self-test, a ToUnicode rewrite to ASCII, and an audit that blocks ligatures and look-alike hyphens | `render.py` |
@@ -105,7 +105,7 @@ A text-based A4 CV (up to two pages) and a one-page letter per job, plus `audit.
 | 2 Triage | "go" | GOOD / CHECK / REMOVED, each with a reason; the agent reads every CHECK | `20_triage.md` |
 | 3 Tailor | "write them" | one spec per job; summary, bullets and a 4-paragraph letter written for that advert | `30_tailor.md` |
 | 4 Audit | automatic | atomic findings, fix, re-render, until 0 blocker and 0 major | `40_audit.md` |
-| 5 Apply | "apply" | parallel fill agents, one approval line, submit, proof | `50_apply.md` |
+| 5 Apply | "apply" | one approval line for the batch, then parallel agents fill + submit, proof | `50_apply.md` |
 | 6 LinkedIn | "tune my LinkedIn" | keyword gaps against your target adverts, drafts you publish | `60_linkedin.md` |
 | 7 Follow-up | "any replies?" | Gmail sweep for confirmations, rejections, interviews | `70_followup.md` |
 
@@ -133,7 +133,7 @@ import-history <tracker.xlsx>      jobs you applied to before, so they never com
 triage [--redo]                    GOOD / CHECK / REMOVED / CLOSED
 batch <label> · tailor <batch> · render <batch> · audit <batch>
 queue <batch> --groups 12          fill-agent groups
-approve-line <batch> · approve <batch> "<pasted line>" · approved <batch>
+approve-batch <batch> · approve <batch> "<pasted line>" · approved <batch> · approve-line <batch>
 record <id> <STATUS> "<note>" --evidence "page: ..."
 show <id> · edit <id> --url ... · status · tracker · gaps <linkedin.txt>
 claim <area> · release <area> · claims · gate <stage> · doctor
@@ -151,7 +151,7 @@ claim <area> · release <area> · claims · gate <stage> · doctor
 ## Tests
 
 ```bash
-python3 -m unittest discover -s tests -v     # 20 tests, offline, about 1 second
+python3 -m unittest discover -s tests -v     # 21 tests, offline, about 1 second
 ```
 
 They cover the ugly cases: fabricated tools and numbers, a letter addressed to the wrong company, badge "evidence",

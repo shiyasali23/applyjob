@@ -16,7 +16,9 @@
   audit <batch> [refs..]                 atomic findings -> AUDITED / AUDIT_FAIL + _apply/findings.xlsx
   queue <batch> [--groups N]             fill-agent groups (_apply/group_XX.json)
   record <ref> <STATUS> "<note>" [--evidence "page: ..."]
+  approve-batch <batch>                  ONE line naming every open job: the user approves the whole batch BEFORE filling
   approve-line <batch> | approve <batch> "<pasted line>" | approved <batch>
+  record <id> SUBMITTED needs --evidence "page:/mail: ..." and the user's approval (--manual: he submitted it himself)
   show <ref>                             one job: fields, notes, events, advert text
   edit <ref> [--company X] [--title X] [--url X] [--location X]
   status [batch] | tracker | gaps <linkedin_profile.txt>
@@ -135,7 +137,7 @@ def _main(argv=None):
     ap.add_argument("cmd"); ap.add_argument("args", nargs="*")
     ap.add_argument("--where", default=""); ap.add_argument("--workers", type=int, default=12)
     ap.add_argument("--limit", type=int, default=0); ap.add_argument("--groups", type=int, default=0)
-    ap.add_argument("--redo", action="store_true"); ap.add_argument("--level", default=""); ap.add_argument("--ids", nargs="*", default=[]); ap.add_argument("--evidence", default="")
+    ap.add_argument("--redo", action="store_true"); ap.add_argument("--manual", action="store_true"); ap.add_argument("--level", default=""); ap.add_argument("--ids", nargs="*", default=[]); ap.add_argument("--evidence", default="")
     ap.add_argument("--owner", default=os.environ.get("APPLYJOB_CHAT", ""))
     for f in ("company", "title", "url", "location"): ap.add_argument("--" + f, default="")
     a = ap.parse_args(argv)
@@ -194,6 +196,8 @@ def _main(argv=None):
         out, n = report.tracker(db); print("wrote %s (%d rows)" % (out, n)); return
     if c == "record":
         j = ledger.resolve(db, x[0])
+        if x[1].upper() == "SUBMITTED" and not a.manual and not ledger.is_approved(db, j["id"]):
+            die("REFUSED: job %d is not in the user's approval line (use --manual only if the USER submitted it)" % j["id"])
         ledger.set_status(db, j["id"], x[1], x[2] if len(x) > 2 else "", a.evidence, actor=a.owner or "agent")
         print("%s %d %s" % (x[1].upper(), j["id"], j["company"])); return
     if c == "show":
@@ -206,8 +210,8 @@ def _main(argv=None):
         j = ledger.resolve(db, x[0])
         ledger.edit(db, j["id"], a.owner or "agent", company=a.company, title=a.title, url=a.url, location=a.location)
         print("edited", j["id"]); return
-    if c == "approve-line":
-        line = applying.approve_line(db, x[0])
+    if c in ("approve-line", "approve-batch"):
+        line = applying.approve_line(db, x[0], before_filling=(c == "approve-batch"))
         print(line or "no READY jobs"); return
     if c == "approve":
         need_profile("approve")

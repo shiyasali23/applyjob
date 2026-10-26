@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS jobs (
 CREATE TABLE IF NOT EXISTS events (
   id INTEGER PRIMARY KEY, job_id INTEGER, ts TEXT, status TEXT, note TEXT, evidence TEXT, actor TEXT);
 CREATE INDEX IF NOT EXISTS ev_job ON events(job_id);
+CREATE TABLE IF NOT EXISTS approvals (job_id INTEGER PRIMARY KEY, ts TEXT, line TEXT);
 """
 
 
@@ -139,6 +140,16 @@ def edit(db, job_id, actor="agent", **fields):
         db.execute("INSERT INTO events(job_id,ts,status,note,evidence,actor) VALUES(?,?,?,?,?,?)",
                    (job_id, now(), j["status"], "edited: " + json.dumps(allowed, ensure_ascii=False), "", actor))
         db.commit()
+
+
+def add_approval(db, job_id, line):
+    with workspace.file_lock("ledger"):
+        db.execute("INSERT OR REPLACE INTO approvals(job_id, ts, line) VALUES(?,?,?)", (job_id, now(), line[:2000]))
+        db.commit()
+
+
+def is_approved(db, job_id):
+    return db.execute("SELECT 1 FROM approvals WHERE job_id=?", (job_id,)).fetchone() is not None
 
 
 def sent_event(db, job_id):

@@ -5,26 +5,20 @@
   on a neutral page first (account avatar). You never log in.
 - `python3 -m applyjob claim batch:<label>`.
 
-## Wave 1: fill (parallel, nothing is submitted)
-1. `python3 -m applyjob queue <batch> --groups 12` → `_apply/group_01..12.json` (~8 jobs each; 12 agents ≈ 100 forms).
-2. Start one fill agent per group with `prompts/fill_agent.md` (replace {GROUP_FILE}). Run them in parallel.
-3. Each agent returns one line per job. Record each line at once:
-   `python3 -m applyjob record <id> READY|NEEDS_USER|LOGIN|EMAIL_ONLY|CLOSED|EXPIRED "<what exactly>"`.
-4. Jobs on platforms that need the user's account (Workday, SuccessFactors, JOIN, LinkedIn Easy Apply): `LOGIN`.
+## Approve the whole batch once, BEFORE filling
+1. `python3 -m applyjob approve-batch <batch>` prints ONE line naming every open job: `submit 12 Acme, 15 Beta, ...`.
+   Give it to the user. He deletes what he doesn't want and pastes it back, once.
+2. `python3 -m applyjob approve <batch> "<his pasted line>"`. A job whose name doesn't match its id is refused.
+   "send all" or "apply to everything" is not an approval: answer with the line.
 
-## Approval (one message from the user)
-5. Report: READY n, NEEDS_USER n (each with the exact field), LOGIN n, EMAIL_ONLY n, CLOSED n.
-6. `python3 -m applyjob approve-line <batch>` prints `submit 12 Acme, 15 Beta, ...`. Give it to the user. He pastes
-   it back (he may delete jobs from it). Then `python3 -m applyjob approve <batch> "<his pasted line>"`.
-   Only jobs in his paste become APPROVED. Never approve on his behalf.
-
-## Wave 2: submit approved jobs only (≤ 4 submit agents in parallel, or yourself)
-7. `python3 -m applyjob approved <batch>` is the ONLY list a submit agent may act on (`prompts/submit_agent.md`).
-   Per job: screenshot → re-check every field and both files (forms expire, reload and drop uploads) → submit →
-   wait 6-8 s → screenshot → read the confirmation.
-8. Record with evidence: `record <id> SUBMITTED "" --evidence "page: <quoted confirmation>"`. Unclear page: search
-   Gmail for the confirmation mail first; JOIN/Arbeitnow need a mail (their on-page badge has lied before).
-9. Validation error: fix (re-upload, retype React fields), retry once, else `NEEDS_USER`.
+## One wave: fill AND submit, in parallel (nothing comes back to him job by job)
+3. `python3 -m applyjob queue <batch> --groups 12` → `_apply/group_01..12.json` (~8 jobs each, each with `approved`).
+4. Start one agent per group with `prompts/apply_agent.md` (replace {GROUP_FILE}, {BATCH}), all in parallel.
+   Each agent fills every form and submits only jobs that are approved, complete, and free of CAPTCHA/login.
+   Everything else stays open in a tab, with the exact reason.
+5. Record each agent line at once: `record <id> SUBMITTED "" --evidence "page: <quote>"` (refused for unapproved jobs),
+   or `NEEDS_USER|LOGIN|EMAIL_ONLY|CLOSED "<what exactly>"`. UNCLEAR → check Gmail for the confirmation mail first.
+6. ONE report: sent n (with proof) · needs you n (tab + reason) · login n · e-mail only n · closed n.
 
 ## After
 10. Gmail sweep the same day and the next: confirmations (fill missing evidence), "complete your application"

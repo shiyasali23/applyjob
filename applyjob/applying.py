@@ -7,7 +7,7 @@ import json, math, re
 from pathlib import Path
 from . import ledger, sources, workspace
 
-FILLABLE = ("AUDITED", "READY", "NEEDS_USER", "EXPIRED")
+FILLABLE = ("AUDITED", "READY", "NEEDS_USER", "EXPIRED", "APPROVED")
 
 
 def batch_dir(label):
@@ -28,7 +28,7 @@ def queue(db, batch, groups=0, per_agent=8):
                   "needs_account": plat in sources.NEEDS_ACCOUNT, "status": j["status"], "last_note": j["note"],
                   "cv": str(D / "cv.pdf"), "letter": str(D / "letter.pdf"),
                   "asks_salary": bool(spec.get("asks_salary")), "asks_start": bool(spec.get("asks_start")),
-                  "apply_email": spec.get("apply_email", "")})
+                  "apply_email": spec.get("apply_email", ""), "approved": ledger.is_approved(db, j["id"])})
     (out / "queue.json").write_text(json.dumps(q, ensure_ascii=False, indent=1))
     for old in out.glob("group_*.json"): old.unlink()
     n = groups or max(1, math.ceil(len(q) / per_agent))
@@ -41,28 +41,46 @@ def queue(db, batch, groups=0, per_agent=8):
     return q, files
 
 
-def approve_line(db, batch):
-    ready = ledger.jobs(db, "READY", batch)
-    return "submit " + ", ".join("%d %s" % (j["id"], j["company"]) for j in ready) if ready else ""
+def _short(company):
+    return re.sub(r"\s+(GmbH|AG|SE|KG|UG|Inc\.?|Ltd\.?|LLC|& Co\.?|mbH)\b.*$", "", company or "").strip()
+
+
+def approve_line(db, batch, before_filling=False):
+    """ONE paste-back line. before_filling=True names every open job of the batch (approve once, then the agents
+    fill AND submit in parallel); False names only READY jobs (the old fill-first flow)."""
+    js = ledger.jobs(db, FILLABLE if before_filling else "READY", batch)
+    js = [j for j in js if not ledger.is_approved(db, j["id"])]
+    return "submit " + ", ".join("%d %s" % (j["id"], _short(j["company"])) for j in js) if js else ""
 
 
 def parse_approval(text):
-    """'submit 12 Acme, 15 Beta GmbH' -> [12, 15]. Ids are required: names alone are ambiguous."""
+    """'submit 12 Acme, 15 Beta GmbH' -> [(12, 'Acme'), (15, 'Beta GmbH')]. Ids are required: names alone are ambiguous."""
     body = re.sub(r"^\s*(submit|approve|send)\b", "", text.strip(), flags=re.I)
-    return [int(m.group(1)) for m in re.finditer(r"(?:^|,)\s*(\d+)\b", body)]
+    out = []
+    for part in [p.strip() for p in body.split(",") if p.strip()]:
+        m = re.match(r"(\d+)\b\s*(.*)$", part)
+        if m: out.append((int(m.group(1)), m.group(2).strip()))
+    return out
 
 
 def approve(db, batch, text, actor="user"):
-    ids = parse_approval(text)
-    if not ids: raise SystemExit("no job ids found; paste the line from `applyjob approve-line`")
+    """Store his approval. A job must be open in this batch, and the name next to its id must match (no guessing)."""
+    items = parse_approval(text)
+    if not items: raise SystemExit("no job ids found; paste the line from `applyjob approve-line`")
     done, refused = [], []
-    for i in ids:
+    for i, name in items:
         j = db.execute("SELECT * FROM jobs WHERE id=?", (i,)).fetchone()
-        if not j or j["batch"] != batch or j["status"] != "READY":
+        if not j or j["batch"] != batch or j["status"] not in FILLABLE + ("READY",):
             refused.append("%d (%s)" % (i, j["status"] if j else "unknown")); continue
-        ledger.set_status(db, i, "APPROVED", "approved by the user: " + text[:200], actor=actor); done.append(i)
+        if name and not _short(j["company"]).lower().startswith(name.lower()[:5]):
+            refused.append("%d (name '%s' is not %s)" % (i, name, j["company"])); continue
+        ledger.add_approval(db, i, text)
+        if j["status"] == "READY":
+            ledger.set_status(db, i, "APPROVED", "approved by the user: " + text[:200], actor=actor)
+        done.append(i)
     return done, refused
 
 
 def approved(db, batch):
-    return [dict(j) for j in ledger.jobs(db, "APPROVED", batch)]
+    """Approved and not yet sent: the only jobs a submit/apply agent may submit."""
+    return [dict(j) for j in ledger.jobs(db, batch=batch) if ledger.is_approved(db, j["id"]) and j["status"] not in ledger.SENT]
