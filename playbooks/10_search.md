@@ -3,6 +3,11 @@
 Every found job goes into the ledger (`FOUND`); duplicates (same company+title, or same link) are merged automatically.
 
 ## Sources, best first
+0. **Every known company board in Germany, in one command** (best yield):
+   `python3 -m applyjob search germany` reads 18,749 public company job feeds (Personio, Greenhouse, Ashby, Workable,
+   SmartRecruiters, Teamtailor, Recruitee, Lever) from `data/germany/boards.csv.gz` in parallel (~10 minutes),
+   and keeps jobs located in Germany (or remote) whose title matches the profile's target roles. Triage then reuses
+   the advert text the feed returned.
 1. **Official APIs** (fast, complete, allowed):
    - `python3 -m applyjob search ba "Data Scientist" --where Berlin` (German federal job board, 100s per query;
      run one query per target role and city)

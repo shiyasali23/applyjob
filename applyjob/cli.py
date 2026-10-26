@@ -7,6 +7,7 @@
   gate <stage>                           OK if the checklist items that stage needs are answered (search, tailor, queue, gaps, ...)
   search ba "<what>" [--where City]      Germany's federal job board (official API)
   search board <platform> <token>        one company's board: greenhouse|lever|ashby|personio|smartrecruiters
+  search germany [--workers 24] [--limit N]   ALL 24k known company boards (data/germany), jobs in Germany matching your target roles
   import <file.xlsx|file.csv|file.txt>   a sheet, or any text with job links (e.g. LinkedIn job-alert mails)
   import-history <tracker.xlsx>          past applications -> SKIP "history", so they are never suggested again
   triage [--workers 12] [--limit N] [--redo]   fetch every FOUND advert -> GOOD / CHECK / REMOVED / CLOSED
@@ -27,7 +28,7 @@
 """
 import argparse, concurrent.futures as cf, json, os, re, sys
 from pathlib import Path
-from . import applying, audit as A, checklist as C, ledger, profile as P, render as R, report, sources, tailor, triage, workspace
+from . import applying, audit as A, boards, checklist as C, ledger, profile as P, render as R, report, sources, tailor, triage, workspace
 
 
 def die(msg):
@@ -51,7 +52,7 @@ def add_many(db, items):
     new = 0
     for it in items:
         _, created = ledger.add(db, it.get("company", ""), it.get("title", "") or it.get("url", ""), it.get("url", ""),
-                                it.get("location", ""), it.get("source", ""))
+                                it.get("location", ""), it.get("source", ""), it.get("description", ""))
         new += created
     print("%d found, %d new, %d already known" % (len(items), new, len(items) - new))
 
@@ -59,6 +60,8 @@ def add_many(db, items):
 def cmd_triage(db, prof, workers, limit, redo=False):
     todo = ledger.jobs(db, ["FOUND", "GOOD", "CHECK", "REMOVED"] if redo else "FOUND")[:limit or None]
     def work(j):
+        if (j["description"] or "") and len(j["description"]) > 400 and j["source"].startswith("board:"):
+            return j, "LIVE", j["description"]       # the board feed already returned the full advert
         if redo and j["description"]:
             return j, "LIVE", j["description"]      # re-judge from the stored advert, no refetch
         if sources.platform(j["url"]) == "linkedin":
@@ -224,6 +227,14 @@ def _main(argv=None):
     if c == "search":
         if x[0] == "ba": add_many(db, sources.search_arbeitsagentur(x[1], a.where))
         elif x[0] == "board": add_many(db, sources.search_board(x[1], x[2]))
+        elif x[0] == "germany":
+            roles = prof["preferences"]["target_roles"]
+            want = lambda title: any(triage.role_in_title(r, title) for r in roles)
+            n, found = boards.scan(want, workers=a.workers or 24, limit=a.limit,
+                                   remote_ok="remote" in [m.lower() for m in prof["preferences"].get("work_mode") or []] or
+                                             "remote" in [l.lower() for l in prof["preferences"].get("locations") or []],
+                                   progress=lambda d, tot, f: print("  %d/%d boards read, %d matching jobs" % (d, tot, f), flush=True))
+            print("read %d boards" % len(n)); add_many(db, found)
         else: die("search ba|board")
     elif c == "import":
         p = Path(x[0]).expanduser()

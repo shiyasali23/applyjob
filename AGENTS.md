@@ -52,11 +52,11 @@ documents, form answers, LinkedIn, outreach e-mail).
 | Stage | Playbook | Commands |
 |---|---|---|
 | 0 Learn the person | `playbooks/00_onboarding.md` | `init`, `profile check`, `profile questions` |
-| 1 Find jobs | `playbooks/10_search.md` | `search ba`, `search board`, `import`, `edit` |
+| 1 Find jobs | `playbooks/10_search.md` | `search germany` (24k company boards), `search ba`, `search board`, `import`, `edit` |
 | 2 Triage | `playbooks/20_triage.md` | `triage`, `show`, `record` |
 | 3 Tailor CV + letter | `playbooks/30_tailor.md` | `batch`, `tailor` (then you write the TODO parts) |
 | 4 Audit + fix loop | `playbooks/40_audit.md` | `render`, `audit` (atomic findings), repeat until 0 BLOCKER/MAJOR |
-| 5 Apply (Chrome) | `playbooks/50_apply.md` | `queue`, fill agents, `record`, `approve-line`, `approve`, `approved` |
+| 5 Apply (Chrome) | `playbooks/50_apply.md` | `approve-batch` (one paste), `queue`, apply agents in parallel, `record`, `approved` |
 | 6 LinkedIn profile | `playbooks/60_linkedin.md` | `gaps` |
 | 7 Follow-up | `playbooks/70_followup.md` | `record ... REPLIED/INTERVIEW/REJECTED`, `tracker`, `status` |
 
@@ -67,6 +67,7 @@ EMAIL_ONLY → APPROVED → SUBMITTED/EMAILED → REPLIED/INTERVIEW/REJECTED/OFF
 ```
 applyjob/        code (locked)          playbooks/   how to do each stage      prompts/   sub-agent prompts
 templates/       CV/letter style        examples/    fictional profile         tests/     python3 -m unittest discover -s tests
+data/germany/    24,443 public company job boards (search germany)
 workspace/       PRIVATE, git-ignored:  profile/ (the person) · ledger.db · tracker.xlsx · batches/<date>_<label>/ ·
                  work/<chat>/ (your scratch) · inbox/ (files to import) · .locks/
 ```

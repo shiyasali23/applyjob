@@ -198,6 +198,29 @@ class T(unittest.TestCase):
         r = run("record", str(i), "SUBMITTED", "", "--evidence", "page: Thank you for applying", "--manual")
         self.assertEqual(r.returncode, 0, r.stderr)
 
+    def test_boards(self):
+        from applyjob import boards
+        rows = boards.load(boards.SUPPORTED)
+        self.assertGreater(len(rows), 15000)                                   # the shipped German board list
+        self.assertTrue(all(r["kind"] in boards.SUPPORTED for r in rows))
+        for loc, ok in [("Berlin, Germany", True), ("München", True), ("Remote (EU)", True), ("Hamburg, DE", True),
+                        ("San Francisco, CA", False), ("Remote, US", False), ("London, United Kingdom", False), ("", False)]:
+            self.assertEqual(boards.in_germany(loc), ok, loc)
+        fake = {"https://boards-api.greenhouse.io/v1/boards/acme/jobs?content=true": json.dumps({"jobs": [
+                    {"title": "Data Scientist", "absolute_url": "https://acme.example/j/1", "location": {"name": "Berlin"}, "content": "&lt;p&gt;Python&lt;/p&gt;"},
+                    {"title": "Data Scientist", "absolute_url": "https://acme.example/j/2", "location": {"name": "New York"}, "content": ""},
+                    {"title": "Office Manager", "absolute_url": "https://acme.example/j/3", "location": {"name": "Berlin"}, "content": ""}]})}
+        orig = boards.sources.get
+        boards.sources.get = lambda url, h=None, limit=0: (200, fake[url]) if url in fake else (404, "")
+        boards.load = lambda kinds=boards.SUPPORTED: [{"kind": "greenhouse", "token": "acme", "domain": "", "company": ""}]
+        try:
+            _, found = boards.scan(lambda title: triage.role_in_title("Data Scientist", title), workers=2)
+        finally:
+            boards.sources.get = orig
+            import importlib; importlib.reload(boards)
+        self.assertEqual([f["url"] for f in found], ["https://acme.example/j/1"])   # role + Germany only
+        self.assertIn("Python", found[0]["description"])
+
     def test_claims(self):
         ok, _ = workspace.claim("batch:x", "chat-a"); self.assertTrue(ok)
         ok2, held = workspace.claim("batch:x", "chat-b"); self.assertFalse(ok2); self.assertEqual(held["owner"], "chat-a")

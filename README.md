@@ -5,7 +5,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/python-3.9%2B-3776ab?style=flat-square" alt="Python 3.9+">
   <img src="https://img.shields.io/badge/dependencies-2-22d3ee?style=flat-square" alt="2 dependencies">
-  <img src="https://img.shields.io/badge/tests-21%20passing-34d399?style=flat-square" alt="21 tests passing">
+  <img src="https://img.shields.io/badge/tests-22%20passing-34d399?style=flat-square" alt="22 tests passing">
   <img src="https://img.shields.io/badge/license-MIT-8b5cf6?style=flat-square" alt="MIT">
   <img src="https://img.shields.io/badge/runs%20in-Claude%20Code-d97757?style=flat-square" alt="Runs in Claude Code">
 </p>
@@ -101,13 +101,28 @@ A text-based A4 CV (up to two pages) and a one-page letter per job, plus `audit.
 | Stage | You say | It does | Playbook |
 |---|---|---|---|
 | 0 Onboarding | "hi" + your CV | builds your profile, asks what's missing | `00_onboarding.md` |
-| 1 Search | "find ML jobs in Berlin" | Arbeitsagentur, Greenhouse, Lever, Ashby, Personio, SmartRecruiters, your sheets, your LinkedIn alerts | `10_search.md` |
+| 1 Search | "find ML jobs in Germany" | 24,443 known company job boards in one command, the federal job board, your sheets, your LinkedIn alerts | `10_search.md` |
 | 2 Triage | "go" | GOOD / CHECK / REMOVED, each with a reason; the agent reads every CHECK | `20_triage.md` |
 | 3 Tailor | "write them" | one spec per job; summary, bullets and a 4-paragraph letter written for that advert | `30_tailor.md` |
 | 4 Audit | automatic | atomic findings, fix, re-render, until 0 blocker and 0 major | `40_audit.md` |
 | 5 Apply | "apply" | one approval line for the batch, then parallel agents fill + submit, proof | `50_apply.md` |
 | 6 LinkedIn | "tune my LinkedIn" | keyword gaps against your target adverts, drafts you publish | `60_linkedin.md` |
 | 7 Follow-up | "any replies?" | Gmail sweep for confirmations, rejections, interviews | `70_followup.md` |
+
+## Germany out of the box
+
+`data/germany/boards.csv.gz` ships 24,443 company job boards (Workable, Greenhouse, Ashby, Personio, SmartRecruiters,
+Teamtailor, Recruitee, Lever, plus Workday, softgarden, JOIN and d.vinci listed), collected from the Common Crawl
+index and from German company websites. One command reads every supported feed in parallel and keeps jobs located in
+Germany that match your target roles:
+
+```text
+$ python3 -m applyjob search germany
+  500/18749 boards read, 10 matching jobs
+  ...
+```
+
+About 10 minutes for all boards. No scraping, no logins: these are the public feeds the companies' own career pages use.
 
 ## Quick start
 
@@ -126,6 +141,7 @@ Everything about you stays on your machine in `workspace/`, which git ignores.
 ```text
 profile new | profile | profile questions --level core|apply|linkedin|email|optional
 read-cv <file>                     text of a CV or LinkedIn export (PDF, DOCX, TXT)
+search germany                     every known company board in Germany (data/germany)
 search ba "<what>" --where <city>  Germany's federal job board
 search board <platform> <token>    one company board: greenhouse, lever, ashby, personio, smartrecruiters
 import <sheet.xlsx | links.txt>    a spreadsheet, or any text with job links
@@ -151,7 +167,7 @@ claim <area> · release <area> · claims · gate <stage> · doctor
 ## Tests
 
 ```bash
-python3 -m unittest discover -s tests -v     # 21 tests, offline, about 1 second
+python3 -m unittest discover -s tests -v     # 22 tests, offline, about 1 second
 ```
 
 They cover the ugly cases: fabricated tools and numbers, a letter addressed to the wrong company, badge "evidence",
@@ -167,6 +183,7 @@ playbooks/         one file per stage: how the agent does the judgement work
 prompts/           the fill-agent and submit-agent prompts
 templates/         CV and letter style (CSS)
 examples/          a fictional profile
+data/germany/      24,443 company job boards (public identifiers only)
 tests/             offline tests
 .claude/           the write-guard hook
 workspace/         yours only, git-ignored: profile, ledger, batches, scratch
@@ -174,7 +191,7 @@ workspace/         yours only, git-ignored: profile, ledger, batches, scratch
 
 ## Roadmap
 
-- Adzuna and more country boards next to the German federal board
+- Readers for the Workday, softgarden, JOIN and d.vinci boards already in the list
 - A second CV template
 - Interview prep packs built from the sent CV, letter and advert
 
