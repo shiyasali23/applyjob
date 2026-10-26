@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="580" viewBox="0 0 1000 580" role="img" aria-label="jobpilot architecture">
+<style>
+ .box { fill:#0f1730; stroke:#23305a; stroke-width:1.5 }
+ .h { font: 700 17px ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; fill:#e2e8f0 }
+ .p { font: 400 13.5px ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; fill:#94a3b8 }
+ .k { font: 600 12px ui-monospace, SFMono-Regular, Menlo, monospace; fill:#64748b; letter-spacing:2px }
+ .mod { fill:#131f42; stroke:#2b3a67 } .m { font: 600 12.5px ui-monospace, SFMono-Regular, Menlo, monospace; fill:#7dd3fc; text-anchor:middle }
+ .chip { fill:#0f1730; stroke:#34d399; stroke-opacity:.55; animation: pulse 4s ease-in-out infinite }
+ .c { font: 600 12.5px ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; fill:#a7f3d0; text-anchor:middle }
+ @keyframes pulse { 50% { stroke-opacity:1 } }
+ .rail { fill:none; stroke:#1d2747; stroke-width:2.5 }
+ .flow { fill:none; stroke-width:2.5; stroke-dasharray:8 12; animation: run 1.1s linear infinite }
+ @keyframes run { to { stroke-dashoffset:-20 } }
+ .db { fill:#0f1730; stroke:url(#g); stroke-width:2 }
+</style>
+<defs>
+ <linearGradient id="g" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8b5cf6"/><stop offset="1" stop-color="#22d3ee"/></linearGradient>
+ <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#22d3ee"/></marker>
+</defs>
+<rect width="1000" height="580" rx="20" fill="#0b1020"/>
+<text x="40" y="34" class="k">HOW THE PIECES TALK</text>
+<rect x="40" y="56" width="250" height="132" rx="14" class="box"/><rect x="40" y="56" width="4" height="132" rx="2" fill="#c4b5fd"/><text x="60" y="88" class="h">You</text><text x="60" y="114" class="p">answer the checklist</text><text x="60" y="135" class="p">log in yourself</text><text x="60" y="156" class="p">approve with one pasted line</text>
+<rect x="375" y="56" width="250" height="132" rx="14" class="box"/><rect x="375" y="56" width="4" height="132" rx="2" fill="#22d3ee"/><text x="395" y="88" class="h">Claude Code agent</text><text x="395" y="114" class="p">reads AGENTS.md + playbooks/</text><text x="395" y="135" class="p">writes every CV and letter</text><text x="395" y="156" class="p">runs 12 fill agents in parallel</text>
+<rect x="710" y="56" width="250" height="132" rx="14" class="box"/><rect x="710" y="56" width="4" height="132" rx="2" fill="#fbbf24"/><text x="730" y="88" class="h">Your browser</text><text x="730" y="114" class="p">forms filled, never sent</text><text x="730" y="135" class="p">submits only APPROVED jobs</text><text x="730" y="156" class="p">screenshot decides, not the DOM</text>
+<rect x="240" y="238" width="520" height="110" rx="14" class="box"/><rect x="240" y="238" width="4" height="110" rx="2" fill="#8b5cf6"/>
+<text x="262" y="272" class="h">jobpilot CLI</text><text x="392" y="272" class="p">deterministic work, one command per stage</text>
+<rect x="262" y="298" width="76" height="28" rx="7" class="mod"/><text x="300" y="317" class="m">sources</text><rect x="347.2" y="298" width="68" height="28" rx="7" class="mod"/><text x="381" y="317" class="m">triage</text><rect x="423.79999999999995" y="298" width="68" height="28" rx="7" class="mod"/><text x="458" y="317" class="m">tailor</text><rect x="500.4" y="298" width="68" height="28" rx="7" class="mod"/><text x="534" y="317" class="m">render</text><rect x="577.0" y="298" width="59" height="28" rx="7" class="mod"/><text x="606" y="317" class="m">audit</text><rect x="645.0" y="298" width="85" height="28" rx="7" class="mod"/><text x="687" y="317" class="m">applying</text><rect x="738.8" y="298" width="68" height="28" rx="7" class="mod"/><text x="773" y="317" class="m">report</text>
+<rect x="300" y="402" width="400" height="76" rx="38" class="db"/>
+<text x="500" y="434" class="h" text-anchor="middle">ledger.db</text>
+<text x="500" y="457" class="p" text-anchor="middle">every job · every status change · every proof</text>
+<path d="M290,122 L373,122" class="rail"/><path d="M290,122 L373,122" class="flow" stroke="url(#g)" style="animation-delay:0s" marker-end="url(#arr)"/>
+<path d="M625,122 L708,122" class="rail"/><path d="M625,122 L708,122" class="flow" stroke="url(#g)" style="animation-delay:0.3s" marker-end="url(#arr)"/>
+<path d="M500,188 L500,236" class="rail"/><path d="M500,188 L500,236" class="flow" stroke="url(#g)" style="animation-delay:0.6s" marker-end="url(#arr)"/>
+<path d="M500,348 L500,400" class="rail"/><path d="M500,348 L500,400" class="flow" stroke="url(#g)" style="animation-delay:0.9s" marker-end="url(#arr)"/>
+<path d="M835,188 C835,330 760,440 702,440" class="rail"/><path d="M835,188 C835,330 760,440 702,440" class="flow" stroke="#fbbf24" style="animation-delay:1.2s" marker-end="url(#arr)"/>
+<rect x="40" y="516" width="144" height="32" rx="16" class="chip"/><text x="112" y="537" class="c">checklist gates</text><rect x="196.0" y="516" width="152" height="32" rx="16" class="chip"/><text x="272" y="537" class="c">write guard hook</text><rect x="360.4" y="516" width="127" height="32" rx="16" class="chip"/><text x="424" y="537" class="c">evidence rule</text><rect x="499.59999999999997" y="516" width="161" height="32" rx="16" class="chip"/><text x="580" y="537" class="c">one-line approval</text><rect x="672.4" y="516" width="110" height="32" rx="16" class="chip"/><text x="728" y="537" class="c">chat claims</text><rect x="794.8" y="516" width="136" height="32" rx="16" class="chip"/><text x="863" y="537" class="c">ATS-clean PDFs</text>
+<text x="40" y="508" class="k">GUARDRAILS IN CODE, NOT IN PROMPTS</text>
+</svg>
