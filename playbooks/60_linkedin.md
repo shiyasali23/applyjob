@@ -5,7 +5,7 @@ Never log in, post, connect, message, follow or endorse for the user. Never auto
 1. **Get the current profile text**: the user pastes it, or a PDF export (More → Save to PDF) into `workspace/inbox/`,
    or (only if the user asks in this chat) read it in his logged-in browser. Save the text as
    `workspace/work/<chat>/linkedin_profile.txt`.
-2. **Keyword gaps**: `python3 -m jobpilot gaps workspace/work/<chat>/linkedin_profile.txt` lists the skills the
+2. **Keyword gaps**: `python3 -m applyjob gaps workspace/work/<chat>/linkedin_profile.txt` lists the skills the
    target adverts ask for most, whether the LinkedIn text has them, and whether the profile backs them
    (`profile:yes`). Only `profile:yes` skills may be added.
 3. **Draft** (into `workspace/work/<chat>/linkedin_drafts.md`), every claim from `profile.json`:

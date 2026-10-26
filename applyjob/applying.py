@@ -1,7 +1,7 @@
 """Applying: queue -> parallel fill agents -> ONE approval line for the user -> submit approved only -> evidence.
 
 The user approves by pasting back the line from `approve_line()` (it names every job). Only jobs named in that
-paste become APPROVED; a submit agent may click Submit ONLY on an APPROVED job (`jobpilot approved <batch>`).
+paste become APPROVED; a submit agent may click Submit ONLY on an APPROVED job (`applyjob approved <batch>`).
 """
 import json, math, re
 from pathlib import Path
@@ -54,7 +54,7 @@ def parse_approval(text):
 
 def approve(db, batch, text, actor="user"):
     ids = parse_approval(text)
-    if not ids: raise SystemExit("no job ids found; paste the line from `jobpilot approve-line`")
+    if not ids: raise SystemExit("no job ids found; paste the line from `applyjob approve-line`")
     done, refused = [], []
     for i in ids:
         j = db.execute("SELECT * FROM jobs WHERE id=?", (i,)).fetchone()

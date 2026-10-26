@@ -1,4 +1,4 @@
-"""jobpilot command line. Every stage is one command; every command reads/writes the ledger.
+"""applyjob command line. Every stage is one command; every command reads/writes the ledger.
 
   init                                   create the private workspace
   read-cv <file.pdf|.docx|.txt>          text of a CV / LinkedIn export -> workspace/inbox/<name>.txt (onboarding)
@@ -20,7 +20,7 @@
   show <ref>                             one job: fields, notes, events, advert text
   edit <ref> [--company X] [--title X] [--url X] [--location X]
   status [batch] | tracker | gaps <linkedin_profile.txt>
-  claim <area> | release <area> | claims  (set JOBPILOT_CHAT=<chat-name>)
+  claim <area> | release <area> | claims  (set APPLYJOB_CHAT=<chat-name>)
   doctor                                 health check of workspace, profile, ledger, claims
 """
 import argparse, concurrent.futures as cf, json, os, re, sys
@@ -35,7 +35,7 @@ def die(msg):
 def need_profile(stage):
     """Load the profile and refuse to run a stage until the checklist items it needs are answered."""
     p = workspace.path("profile", "profile.json")
-    if not p.exists(): die("no profile yet: run `jobpilot profile new`, then follow playbooks/00_onboarding.md")
+    if not p.exists(): die("no profile yet: run `applyjob profile new`, then follow playbooks/00_onboarding.md")
     prof = P.load(p)
     levels = C.STAGE_NEEDS.get(stage, ("core",))
     errs = P.check(prof, levels)
@@ -131,12 +131,12 @@ def main(argv=None):
 
 
 def _main(argv=None):
-    ap = argparse.ArgumentParser(prog="jobpilot", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap = argparse.ArgumentParser(prog="applyjob", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("cmd"); ap.add_argument("args", nargs="*")
     ap.add_argument("--where", default=""); ap.add_argument("--workers", type=int, default=12)
     ap.add_argument("--limit", type=int, default=0); ap.add_argument("--groups", type=int, default=0)
     ap.add_argument("--redo", action="store_true"); ap.add_argument("--level", default=""); ap.add_argument("--ids", nargs="*", default=[]); ap.add_argument("--evidence", default="")
-    ap.add_argument("--owner", default=os.environ.get("JOBPILOT_CHAT", ""))
+    ap.add_argument("--owner", default=os.environ.get("APPLYJOB_CHAT", ""))
     for f in ("company", "title", "url", "location"): ap.add_argument("--" + f, default="")
     a = ap.parse_args(argv)
     c, x = a.cmd, a.args
@@ -151,7 +151,7 @@ def _main(argv=None):
         for cl in workspace.claims(): print("%(area)s  held by %(owner)s since %(since)s" % cl)
         return
     if c in ("claim", "release"):
-        if not a.owner: die("set JOBPILOT_CHAT=<your chat name> (or --owner)")
+        if not a.owner: die("set APPLYJOB_CHAT=<your chat name> (or --owner)")
         if c == "claim":
             ok, held = workspace.claim(x[0], a.owner)
             if not ok: die("BUSY: %s is held by %s since %s. Work elsewhere or wait." % (x[0], held["owner"], held.get("since")))
@@ -166,7 +166,7 @@ def _main(argv=None):
             if pp.exists(): die("a profile exists already: %s" % pp)
             workspace.init(); pp.write_text(json.dumps(C.skeleton(), ensure_ascii=False, indent=1))
             print("empty profile with every checklist field ->", pp); return
-        if not pp.exists(): die("no profile yet: run `jobpilot profile new`")
+        if not pp.exists(): die("no profile yet: run `applyjob profile new`")
         prof = P.load(pp)
         if x and x[0] == "questions":
             lv = [a.level] if a.level else ["core", "apply", "linkedin", "email", "optional"]
@@ -182,7 +182,7 @@ def _main(argv=None):
     if c == "doctor":
         print("workspace:", workspace.home())
         p = workspace.path("profile", "profile.json")
-        print("profile:", "missing" if not p.exists() else ("OK" if not P.check(P.load(p)) else "incomplete (run: jobpilot profile)"))
+        print("profile:", "missing" if not p.exists() else ("OK" if not P.check(P.load(p)) else "incomplete (run: applyjob profile)"))
         if p.exists() and workspace.path(".onboarding").exists() and not P.check(P.load(p)):
             print("note: profile complete but still unlocked; after the user confirmed it: rm workspace/.onboarding")
         print("ledger:", ledger.counts(db) or "empty")

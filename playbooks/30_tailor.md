@@ -1,7 +1,7 @@
 # 30 Tailor: one CV + one letter per job, written for that job, true to the profile
 
-1. `python3 -m jobpilot batch <label>` (e.g. `berlin-ml-oct`) → `batches/<date>_<label>`; claim it.
-2. `python3 -m jobpilot tailor <batch>` drafts `spec.json` per GOOD job: headline (= posting title), skills rows
+1. `python3 -m applyjob batch <label>` (e.g. `berlin-ml-oct`) → `batches/<date>_<label>`; claim it.
+2. `python3 -m applyjob tailor <batch>` drafts `spec.json` per GOOD job: headline (= posting title), skills rows
    re-ordered with the advert's skills first, the profile's bullets, the advert's terms, and TODO slots.
 3. **Write every TODO slot** (batches of ~10 jobs; read `_advert` in each spec first, then the profile):
    - `summary`: 3-4 sentences. Starts with the headline role, years of experience as the profile states them,

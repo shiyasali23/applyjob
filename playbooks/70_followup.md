@@ -9,5 +9,5 @@
 3. Interviews: create `workspace/work/<chat>/interview_<company>.md`: the advert, the CV and letter that were sent
    (from the batch folder), the 5 likely questions per advert requirement, and the profile facts that answer them.
 4. Never reply or send on the user's behalf; draft replies only when asked, into Gmail Drafts at most.
-5. Weekly: `python3 -m jobpilot tracker` + `status`; report sent / replies / interviews / rejections, and what
+5. Weekly: `python3 -m applyjob tracker` + `status`; report sent / replies / interviews / rejections, and what
    changed in the search (more GOOD jobs in which roles/cities).

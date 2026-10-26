@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/hero.svg" alt="jobpilot" width="100%">
+  <img src="assets/hero.svg" alt="applyjob" width="100%">
 </p>
 
 <p align="center">
@@ -10,7 +10,7 @@
   <img src="https://img.shields.io/badge/runs%20in-Claude%20Code-d97757?style=flat-square" alt="Runs in Claude Code">
 </p>
 
-jobpilot turns Claude Code into a job-search assistant you can actually trust with your name on it. You give it
+applyjob turns Claude Code into a job-search assistant you can actually trust with your name on it. You give it
 your CV once. It finds jobs, throws out the ones that don't fit, writes a CV and cover letter for each remaining job,
 checks every line of both against your real history, fills the application forms in your own browser, and waits for
 you to approve them in one message. Then it proves each application was really sent.
@@ -23,7 +23,7 @@ writing a letter, filling a form. Every rule that matters is enforced in Python,
 I prepared more than 300 job applications in Germany with AI help, and the failures taught me more than the successes:
 
 - An agent once marked **84 applications as sent that were never sent**. Nobody lied; it just took a filled form for
-  a finished one. So jobpilot refuses to mark anything sent without a quoted confirmation page or e-mail.
+  a finished one. So applyjob refuses to mark anything sent without a quoted confirmation page or e-mail.
 - A PDF engine silently turned "Air**fl**ow" into a ligature character. A human sees "Airflow", an ATS keyword search
   doesn't. So every PDF is now checked at the character level, and the font's character map is rewritten to plain ASCII.
 - Long chats drift. By message 400 an agent forgets the rule from message 3. So the rules live in code (stage gates,
@@ -34,7 +34,7 @@ I prepared more than 300 job applications in Germany with AI help, and the failu
 ## A session
 
 <p align="center">
-  <img src="assets/terminal.svg" alt="A jobpilot session in Claude Code" width="100%">
+  <img src="assets/terminal.svg" alt="A applyjob session in Claude Code" width="100%">
 </p>
 
 You say "hi". It asks for your master CV, reads it, and then asks only what the CV can't tell it, as a short list.
@@ -49,7 +49,7 @@ After that you talk to it normally: *"find data analyst jobs in Munich"*, *"writ
 - **You** answer the checklist, log in to your own accounts, and approve submissions by pasting back one line.
 - **The agent** (Claude Code) reads `AGENTS.md`, then the playbook for the stage it's on. It writes the documents and
   runs up to 12 fill agents in parallel, one group of forms each.
-- **The CLI** (`python3 -m jobpilot ...`) does the deterministic work: job APIs, triage rules, rendering, the audit,
+- **The CLI** (`python3 -m applyjob ...`) does the deterministic work: job APIs, triage rules, rendering, the audit,
   the queue.
 - **The ledger** (`workspace/ledger.db`, SQLite) is the only source of truth: every job, every status change, every
   piece of proof. The tracker spreadsheet is generated from it and never edited by hand.
@@ -69,13 +69,13 @@ After that you talk to it normally: *"find data analyst jobs in Munich"*, *"writ
 
 ## The checklist
 
-`jobpilot/checklist.py` lists every detail a real application form has ever asked for: name, salutation, date of
+`applyjob/checklist.py` lists every detail a real application form has ever asked for: name, salutation, date of
 birth, nationality, address, work permit and its expiry, sponsorship, start date, notice period, gross salary, work
 mode, office days, relocation, travel, driver's licence, years with and without internships, years per field, people
 managed, a reference, certificates, talent-pool consent, LinkedIn and e-mail preferences.
 
 ```text
-$ python3 -m jobpilot profile
+$ python3 -m applyjob profile
 core       32/32  complete
 apply      19/27  INCOMPLETE
 linkedin    5/7   INCOMPLETE
@@ -112,8 +112,8 @@ A text-based A4 CV (up to two pages) and a one-page letter per job, plus `audit.
 ## Quick start
 
 ```bash
-git clone https://github.com/shiyasali23/jobpilot.git
-cd jobpilot
+git clone https://github.com/shiyasali23/applyjob.git
+cd applyjob
 pip install pymupdf openpyxl
 claude            # or open the folder in the Claude desktop app, then say "hi"
 ```
@@ -162,7 +162,7 @@ with no workspace, the stage gates, and the write guard.
 
 ```text
 AGENTS.md          rules every chat loads first (CLAUDE.md points here)
-jobpilot/          the CLI: checklist, sources, triage, tailor, render, audit, applying, ledger, guard
+applyjob/          the CLI: checklist, sources, triage, tailor, render, audit, applying, ledger, guard
 playbooks/         one file per stage: how the agent does the judgement work
 prompts/           the fill-agent and submit-agent prompts
 templates/         CV and letter style (CSS)

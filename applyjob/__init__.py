@@ -1,4 +1,4 @@
-"""jobpilot: an agent harness for honest, high-volume job applications.
+"""applyjob: an agent harness for honest, high-volume job applications.
 
 The code does the deterministic work (search APIs, triage, rendering, auditing, the ledger).
 The AI agent does the judgement work (writing, reading pages, filling forms) by following playbooks/.

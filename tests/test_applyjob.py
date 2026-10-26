@@ -3,10 +3,10 @@ import json, os, shutil, subprocess, sys, tempfile, unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-TMP = tempfile.mkdtemp(prefix="jobpilot_test_")
-os.environ["JOBPILOT_HOME"] = TMP
+TMP = tempfile.mkdtemp(prefix="applyjob_test_")
+os.environ["APPLYJOB_HOME"] = TMP
 sys.path.insert(0, str(ROOT))
-from jobpilot import applying, audit as A, checklist as C, ledger, profile as P, render as R, tailor, triage, vocab, workspace, sources  # noqa: E402
+from applyjob import applying, audit as A, checklist as C, ledger, profile as P, render as R, tailor, triage, vocab, workspace, sources  # noqa: E402
 
 PROF = P.load(ROOT / "examples" / "profile.example.json")
 ADVERT = """Data Scientist (m/w/d) at Nordwind Logistics GmbH, Berlin.
@@ -68,15 +68,15 @@ class T(unittest.TestCase):
         p = dict(PROF); self.assertIn("writing.banned_phrases", p["_declined"]); self.assertEqual(p["writing"]["banned_phrases"], [])
 
     def test_gates(self):
-        env = dict(os.environ, JOBPILOT_HOME=tempfile.mkdtemp())
-        run = lambda *a: subprocess.run([sys.executable, "-m", "jobpilot"] + list(a), cwd=ROOT, env=env, capture_output=True, text=True)
+        env = dict(os.environ, APPLYJOB_HOME=tempfile.mkdtemp())
+        run = lambda *a: subprocess.run([sys.executable, "-m", "applyjob"] + list(a), cwd=ROOT, env=env, capture_output=True, text=True)
         self.assertEqual(run("profile", "new").returncode, 0)
         r = run("search", "ba", "Data Scientist")
         self.assertEqual(r.returncode, 1); self.assertIn("BLOCKED", r.stderr); self.assertIn("- First name", r.stderr)
         prof = json.loads(json.dumps(P.load(ROOT / "examples" / "profile.example.json")))
         for k in ("nationality", "street"): prof["person"][k] = ""                       # apply items missing
         prof["_declined"] = [d for d in prof["_declined"] if d not in ("person.nationality", "person.street")]
-        Path(env["JOBPILOT_HOME"], "profile", "profile.json").write_text(json.dumps(prof))
+        Path(env["APPLYJOB_HOME"], "profile", "profile.json").write_text(json.dumps(prof))
         self.assertEqual(run("gate", "tailor").returncode, 0)
         r = run("gate", "queue")
         self.assertEqual(r.returncode, 1); self.assertIn("- Nationality", r.stderr); self.assertIn("- Street", r.stderr)
@@ -199,18 +199,18 @@ class T(unittest.TestCase):
         self.assertEqual(A.numbers("1.2 TB and 186,956 pairs"), A.numbers("1,2 TB und 186.956 Paare"))
 
     def test_guard(self):
-        from jobpilot import guard
+        from applyjob import guard
         H = Path(TMP)
         if (H / ".onboarding").exists(): (H / ".onboarding").unlink()      # init unlocked the first profile write
         self.assertTrue(guard.decide(str(H / "batches" / "b" / "x" / "spec.json"))[0])
         self.assertTrue(guard.decide(str(H / "work" / "chat-a" / "notes.md"))[0])
         self.assertFalse(guard.decide(str(H / "ledger.db"))[0])
         self.assertFalse(guard.decide(str(H / "profile" / "profile.json"))[0])
-        self.assertFalse(guard.decide(str(ROOT / "jobpilot" / "cli.py"))[0])
+        self.assertFalse(guard.decide(str(ROOT / "applyjob" / "cli.py"))[0])
         self.assertFalse(guard.decide("/Users/someone/Desktop/random.txt")[0])
         (H / ".onboarding").write_text(""); self.assertTrue(guard.decide(str(H / "profile" / "profile.json"))[0]); (H / ".onboarding").unlink()
-        r = subprocess.run([sys.executable, str(ROOT / "jobpilot" / "guard.py")], input=json.dumps({"tool_input": {"file_path": "/tmp/x.txt"}}),
-                           env=dict(os.environ, JOBPILOT_HOME=TMP), capture_output=True, text=True)
+        r = subprocess.run([sys.executable, str(ROOT / "applyjob" / "guard.py")], input=json.dumps({"tool_input": {"file_path": "/tmp/x.txt"}}),
+                           env=dict(os.environ, APPLYJOB_HOME=TMP), capture_output=True, text=True)
         self.assertEqual(r.returncode, 2); self.assertIn("BLOCKED", r.stderr)
 
     def test_edit_relink(self):
@@ -227,15 +227,15 @@ class T(unittest.TestCase):
 
     def test_first_run(self):
         fresh = tempfile.mkdtemp(); shutil.rmtree(fresh)                   # a new user: no workspace at all
-        r = subprocess.run([sys.executable, "-m", "jobpilot", "doctor"], cwd=ROOT, env=dict(os.environ, JOBPILOT_HOME=fresh),
+        r = subprocess.run([sys.executable, "-m", "applyjob", "doctor"], cwd=ROOT, env=dict(os.environ, APPLYJOB_HOME=fresh),
                            capture_output=True, text=True)
         self.assertEqual(r.returncode, 0, r.stderr); self.assertIn("profile: missing", r.stdout)
         self.assertTrue((Path(fresh) / ".onboarding").exists())
         shutil.rmtree(fresh, ignore_errors=True)
 
     def test_cli(self):
-        env = dict(os.environ, JOBPILOT_HOME=TMP)
-        r = subprocess.run([sys.executable, "-m", "jobpilot", "doctor"], cwd=ROOT, env=env, capture_output=True, text=True)
+        env = dict(os.environ, APPLYJOB_HOME=TMP)
+        r = subprocess.run([sys.executable, "-m", "applyjob", "doctor"], cwd=ROOT, env=env, capture_output=True, text=True)
         self.assertEqual(r.returncode, 0, r.stderr); self.assertIn("profile: OK", r.stdout)
 
 

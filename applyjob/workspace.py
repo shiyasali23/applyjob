@@ -1,6 +1,6 @@
 """Where everything lives, and the locks that keep parallel agent chats from colliding.
 
-The workspace (default: <repo>/workspace, override with $JOBPILOT_HOME) is PRIVATE and git-ignored:
+The workspace (default: <repo>/workspace, override with $APPLYJOB_HOME) is PRIVATE and git-ignored:
     profile/profile.json   the applicant (the only source of personal facts)
     profile/photo.jpg      optional
     ledger.db              every job, every status change, every piece of evidence
@@ -21,7 +21,7 @@ REPO = Path(__file__).resolve().parents[1]
 
 
 def home():
-    return Path(os.environ.get("JOBPILOT_HOME") or (REPO / "workspace")).expanduser().resolve()
+    return Path(os.environ.get("APPLYJOB_HOME") or (REPO / "workspace")).expanduser().resolve()
 
 
 def path(*parts):

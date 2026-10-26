@@ -175,7 +175,7 @@ def audit_pdfs(folder, spec, prof):
     for name, pages_max in (("cv.pdf", mx), ("letter.pdf", 1)):
         p = folder / name
         if not p.exists():
-            a.add("BLOCKER", name, "file exists", "missing", "run jobpilot render"); continue
+            a.add("BLOCKER", name, "file exists", "missing", "run applyjob render"); continue
         doc = fitz.open(p)
         raw = "\n".join(pg.get_text() for pg in doc)
         text = " ".join(re.sub(r"(\w)-\n(\w)", r"\1-\2", raw).split())   # a word wrapped at its own hyphen is one word

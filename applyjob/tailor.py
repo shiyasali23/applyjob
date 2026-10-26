@@ -5,7 +5,7 @@ A spec holds everything the CV and the letter will say. It starts as a draft:
 - the advert's terms split into KNOWN (in the profile) and NEW (learnable, decided by the profile's rule);
 - skills rows re-ordered so the advert's skills come first;
 - empty "TODO" slots for the parts only a writer can do well: summary, reworded bullets, letter paragraphs.
-`jobpilot render` refuses a spec that still has TODO in it.
+`applyjob render` refuses a spec that still has TODO in it.
 """
 import json, re
 from . import profile as P, triage, vocab

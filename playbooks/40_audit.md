@@ -1,6 +1,6 @@
 # 40 Audit: atomic error list → fix → re-audit until clean
 
-`python3 -m jobpilot render <batch>` then `python3 -m jobpilot audit <batch>`.
+`python3 -m applyjob render <batch>` then `python3 -m applyjob audit <batch>`.
 Each finding is ONE problem at ONE place: `A07 BLOCKER cv.acme.b2 | rule | evidence -> fix`. All findings of the batch
 are also in `batches/<b>/_apply/findings.xlsx` (one row each), for the user.
 

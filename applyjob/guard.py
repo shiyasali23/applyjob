@@ -19,7 +19,7 @@ REPO = Path(__file__).resolve().parents[1]
 
 
 def home():
-    return Path(os.environ.get("JOBPILOT_HOME") or (REPO / "workspace")).expanduser().resolve()
+    return Path(os.environ.get("APPLYJOB_HOME") or (REPO / "workspace")).expanduser().resolve()
 
 
 def decide(file_path):
@@ -32,7 +32,7 @@ def decide(file_path):
         rel = p.relative_to(H).parts
         top = rel[0] if rel else ""
         if p.name in ("ledger.db", "tracker.xlsx") and len(rel) == 1:
-            return False, "the ledger and tracker are written only by `python3 -m jobpilot ...` commands"
+            return False, "the ledger and tracker are written only by `python3 -m applyjob ...` commands"
         if top in ("batches", "work", "inbox"):
             return True, ""
         if top == "profile":
@@ -41,7 +41,7 @@ def decide(file_path):
     if under(REPO):
         return (H / ".allow_code_edits").exists(), ("the package code is locked; the user unlocks it with `touch workspace/.allow_code_edits`. "
                                                     "Scratch files go to workspace/work/<your-chat-name>/")
-    return False, "outside the jobpilot repo: write scratch files to workspace/work/<your-chat-name>/"
+    return False, "outside the applyjob repo: write scratch files to workspace/work/<your-chat-name>/"
 
 
 def main():
@@ -53,7 +53,7 @@ def main():
     fp = ti.get("file_path") or ti.get("notebook_path") or ""
     ok, why = decide(fp)
     if ok: return 0
-    print("BLOCKED by jobpilot guard: %s -> %s" % (fp, why), file=sys.stderr)
+    print("BLOCKED by applyjob guard: %s -> %s" % (fp, why), file=sys.stderr)
     return 2
 
 

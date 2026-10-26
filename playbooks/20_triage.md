@@ -1,9 +1,9 @@
 # 20 Triage: GOOD / CHECK / REMOVED, with a reason for every job
 
-1. `python3 -m jobpilot triage --workers 12` fetches every FOUND advert (platform APIs first) and judges it by the
+1. `python3 -m applyjob triage --workers 12` fetches every FOUND advert (platform APIs first) and judges it by the
    profile's preferences: excluded title words and contract types → REMOVED; closed → CLOSED; anything uncertain
    (blockers, years, location, unreadable page, LinkedIn link) → CHECK with the reason.
-2. **Read every CHECK advert yourself** (`python3 -m jobpilot show <id>`, or open it in the browser when the text is
+2. **Read every CHECK advert yourself** (`python3 -m applyjob show <id>`, or open it in the browser when the text is
    empty) and decide:
    - `record <id> GOOD "<why it fits>"` or `record <id> REMOVED "<the real blocker>"`.
    - Real blockers: a hard requirement the profile cannot meet (years far above, a degree type, a language the
