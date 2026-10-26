@@ -1,0 +1,7 @@
+# private data: never commit
+workspace/
+*.pdf
+!examples/*.pdf
+__pycache__/
+*.pyc
+.DS_Store

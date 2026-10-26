@@ -1,0 +1,27 @@
+/* CV + letter style. Change freely; the audit checks content, not looks. Fonts: PDF base-14 (always text, ATS-safe). */
+* { font-family: Helvetica, Arial, sans-serif; font-size: 9.6pt; line-height: 1.32; color: #1d1d1f; }
+h1 { font-size: 20pt; margin: 0 0 2pt 0; color: #111; }
+h2 { font-size: 10.5pt; text-transform: uppercase; letter-spacing: 0.6pt; color: #1f4e79;
+     border-bottom: 0.8pt solid #1f4e79; margin: 9pt 0 4pt 0; padding-bottom: 1pt; }
+p { margin: 0 0 3pt 0; }
+ul { margin: 0 0 4pt 0; padding-left: 12pt; }
+li { margin: 0 0 1.5pt 0; }
+.head { margin-bottom: 2pt; }
+.head.withphoto { margin-right: 84pt; min-height: 70pt; }
+.headline { font-size: 11.5pt; font-weight: bold; color: #1f4e79; margin: 0 0 3pt 0; }
+.contact { font-size: 8.8pt; color: #444; margin: 0; }
+.role { margin: 5pt 0 2pt 0; }
+.when { color: #555; font-size: 8.8pt; }
+table.skills td { vertical-align: top; padding: 0 6pt 2pt 0; }
+td.k { font-weight: bold; width: 105pt; }
+.sender { font-size: 9pt; color: #444; margin-bottom: 18pt; }
+.to { margin-bottom: 14pt; }
+.date { text-align: right; margin-bottom: 12pt; }
+.subject { margin-bottom: 10pt; }
+
+/* letter */
+.letter * { font-size: 10.6pt; line-height: 1.42; }
+.letter p { margin: 0 0 9pt 0; }
+.letter .sender { font-size: 9pt; margin-bottom: 26pt; }
+.letter .to { margin-bottom: 22pt; }
+.letter .closing { margin: 14pt 0 2pt 0; }

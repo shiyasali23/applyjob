@@ -1,0 +1,272 @@
+{
+ "_doc": "FICTIONAL example. Copy to workspace/profile/profile.json and replace every value with the user's real facts (playbooks/00_onboarding.md). Every field the agent may ever type or print must be here; nothing outside this file may be claimed.",
+ "person": {
+  "first_name": "Alex",
+  "last_name": "Example",
+  "preferred_name": "-",
+  "email": "alex.example@example.com",
+  "phone": "+49 30 1234567",
+  "city": "Berlin",
+  "country": "Germany",
+  "linkedin": "https://www.linkedin.com/in/alex-example",
+  "github": "https://github.com/alex-example",
+  "website": "",
+  "salutation": "-",
+  "gender": "prefer not to say",
+  "pronouns": "-",
+  "date_of_birth": "1998-04-02",
+  "place_of_birth": "Hamburg",
+  "nationality": "German",
+  "second_nationality": "-",
+  "street": "Musterstraße 1",
+  "postcode": "10115",
+  "region": "Berlin",
+  "marital_status": "-",
+  "disability_status": "prefer not to say",
+  "eeo_answers": "prefer not to say",
+  "work_permit": "EU citizen",
+  "permit_type": "EU citizen",
+  "permit_valid_until": "-",
+  "needs_sponsorship": false,
+  "can_work_in": [
+   "EU"
+  ],
+  "security_clearance": "none",
+  "background_check_ok": true,
+  "drivers_licence": "B",
+  "own_car": false
+ },
+ "documents": {
+  "photo": false,
+  "master_cv": "-",
+  "certificates_pdf": "-",
+  "transcript_pdf": "-",
+  "work_references_pdf": "-"
+ },
+ "preferences": {
+  "available_from": "immediately",
+  "notice_period": "none",
+  "salary_expectation": "55,000 EUR per year",
+  "salary_minimum": "-",
+  "contract": [
+   "full-time"
+  ],
+  "weekly_hours": 40,
+  "work_mode": [
+   "hybrid",
+   "remote"
+  ],
+  "office_days_ok": "up to 3",
+  "relocation": true,
+  "relocation_regions": [
+   "Germany"
+  ],
+  "travel_ok": "up to 20%",
+  "include_learnable_advert_skills": false,
+  "target_roles": [
+   "Data Scientist",
+   "Machine Learning Engineer",
+   "Data Engineer"
+  ],
+  "locations": [
+   "Berlin",
+   "Hamburg",
+   "remote"
+  ],
+  "exclude_title_words": [
+   "Senior",
+   "Lead",
+   "Principal",
+   "Staff",
+   "Head",
+   "Director",
+   "Manager"
+  ],
+  "max_years_required": 4,
+  "blockers": [
+   "security clearance",
+   "PhD (required|erforderlich)"
+  ],
+  "industries_excluded": [
+   "-"
+  ],
+  "companies_excluded": [
+   "-"
+  ],
+  "apply_if_language_required": true,
+  "document_language": "advert",
+  "learnable_group": "Further skills",
+  "cv_max_pages": 2
+ },
+ "summary": "Data scientist with 3 years of experience building forecasting and NLP systems in Python and SQL.",
+ "facts": [
+  "Built a demand-forecasting service used by 40 stores."
+ ],
+ "experience": [
+  {
+   "id": "acme",
+   "title": "Data Scientist",
+   "company": "Acme Retail GmbH",
+   "location": "Berlin",
+   "start": "03/2023",
+   "end": "",
+   "kind": "employment",
+   "stack": [
+    "Python",
+    "pandas",
+    "scikit-learn",
+    "XGBoost",
+    "SQL",
+    "PostgreSQL",
+    "Airflow",
+    "Docker"
+   ],
+   "bullets": [
+    "Built a demand-forecasting service with XGBoost and Airflow, used by 40 stores every morning.",
+    "Cut the weekly reporting time from 6 hours to 30 minutes by automating SQL pipelines in PostgreSQL."
+   ]
+  },
+  {
+   "id": "uni",
+   "title": "Research Assistant",
+   "company": "TU Example",
+   "location": "Berlin",
+   "start": "10/2021",
+   "end": "02/2023",
+   "kind": "employment",
+   "stack": [
+    "Python",
+    "PyTorch",
+    "Hugging Face Transformers",
+    "NLP"
+   ],
+   "bullets": [
+    "Fine-tuned transformer models with PyTorch for German text classification on 120,000 documents."
+   ]
+  }
+ ],
+ "education": [
+  {
+   "degree": "M.Sc. Data Science",
+   "school": "TU Example",
+   "start": "2021",
+   "end": "2023",
+   "detail": "Thesis: multilingual text classification"
+  }
+ ],
+ "certifications": [
+  "AWS Certified Cloud Practitioner, 2024"
+ ],
+ "skills": {
+  "Machine Learning": [
+   "scikit-learn",
+   "XGBoost",
+   "PyTorch",
+   "Hugging Face Transformers",
+   "NLP",
+   "Time Series",
+   "Forecasting"
+  ],
+  "Data": [
+   "Python",
+   "pandas",
+   "SQL",
+   "PostgreSQL",
+   "Airflow"
+  ],
+  "Engineering": [
+   "Docker",
+   "Git",
+   "FastAPI",
+   "AWS"
+  ]
+ },
+ "languages": [
+  {
+   "name": "German",
+   "level": "native"
+  },
+  {
+   "name": "English",
+   "level": "C1"
+  }
+ ],
+ "never_claim": [
+  "Java",
+  "C++",
+  "Kubernetes"
+ ],
+ "never_mention": [
+  "unemployed"
+ ],
+ "answers": {
+  "years_experience": 3,
+  "years_experience_excl_internships": 3,
+  "years_by_field": "data science: 3",
+  "people_managed": 0,
+  "industries": [
+   "retail",
+   "research"
+  ],
+  "startups_worked_with": [
+   "-"
+  ],
+  "teaching_experience": "-",
+  "previous_employers_to_flag": [
+   "-"
+  ],
+  "relatives_at_companies": "none",
+  "highest_degree": "M.Sc. Data Science, TU Example, 2023",
+  "language_certificates": [
+   "-"
+  ],
+  "reference_contact": "Dr. Sam Sample, team lead at Acme Retail, sam@example.com, former manager",
+  "source_answer": "Job board",
+  "talent_pool": false,
+  "newsletter": false,
+  "essay_policy": "draft for my OK",
+  "notice_period": "none",
+  "relocation": "Yes"
+ },
+ "writing": {
+  "letter_required_sentence": "-",
+  "banned_phrases": [
+   "-"
+  ],
+  "summary_words": [
+   30,
+   95
+  ],
+  "letter_words": [
+   90,
+   170
+  ],
+  "max_sentence_words": 24,
+  "soft_skills": 3
+ },
+ "accounts": {
+  "browser_profile": "alex.example@example.com",
+  "existing": [
+   "-"
+  ]
+ },
+ "linkedin": {
+  "profile_text": "-",
+  "edit_mode": "drafts only",
+  "keep": [
+   "all entries"
+  ],
+  "off_limits": [
+   "-"
+  ],
+  "voice": "plain, senior",
+  "language": "English",
+  "open_to_work": "recruiters only"
+ },
+ "email": {
+  "send_from": "alex.example@example.com",
+  "signature": "Alex Example, +49 30 1234567",
+  "per_week": 20,
+  "follow_up": "one after 7 working days"
+ }
+}

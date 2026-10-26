@@ -1,0 +1,17 @@
+[project]
+name = "jobpilot"
+version = "0.1.0"
+description = "An agent harness for honest, high-volume job applications: profile, search, triage, tailored CV + letter, atomic audit, browser apply with human approval, evidence ledger."
+requires-python = ">=3.9"
+dependencies = ["pymupdf>=1.24", "openpyxl>=3.1"]
+license = {text = "MIT"}
+
+[project.scripts]
+jobpilot = "jobpilot.cli:main"
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["jobpilot"]
